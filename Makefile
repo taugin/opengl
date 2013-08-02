@@ -41,6 +41,7 @@ define under-all-c-files
 			find -L $(1) $(2) $(3) -name "*.c" -and -readable))
 endef
 
+#generate executable file
 define translate-host-o-to-executable
 	@mkdir -p $(dir $@)
 	@$(GPP) -o $@ $(LOCAL_CPP_OBJ_FILES) $(LOCAL_C_OBJ_FILES) $(SHARED_LIBRARIES)
@@ -48,6 +49,7 @@ define translate-host-o-to-executable
 	@ln -sf $@
 endef
 
+#generate shared lib file
 define translate-host-o-to-shared-lib
 	@mkdir -p $(dir $@)
 	@$(GPP) -o $@ $(LOCAL_CPP_OBJ_FILES) $(LOCAL_C_OBJ_FILES) $(SHARED_LIBRARIES) -shared -fPIC
@@ -103,5 +105,5 @@ endif
 
 .PHONY : clean 
 clean : 
-	@-rm -rvf out/ $(OBJECT) 
+	@-rm -rvf out/ $(OBJECT)
 	@echo "Clean over"
