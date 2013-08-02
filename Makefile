@@ -61,8 +61,8 @@ LOCAL_SRC_FILES := $(call under-all-cpp-files, .) $(call under-all-c-files, .)
 LOCAL_CPP_OBJ_FILES := $(foreach item, $(filter %.cpp, $(LOCAL_SRC_FILES)), $(patsubst $(LOCAL_SRC_DIR)/%.cpp, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.o, $(item)))
 LOCAL_C_OBJ_FILES := $(foreach item, $(filter %.c, $(LOCAL_SRC_FILES)), $(patsubst $(LOCAL_SRC_DIR)/%.c, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.o, $(item)))
 
-LOCAL_CPP_DEP_FILES := $(foreach item, $(LOCAL_SRC_FILES), $(patsubst $(LOCAL_SRC_DIR)/%.cpp, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.d, $(item)))
-LOCAL_C_DEP_FILES := $(foreach item, $(LOCAL_SRC_FILES), $(patsubst $(LOCAL_SRC_DIR)/%.c, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.d, $(item)))
+LOCAL_CPP_DEP_FILES := $(foreach item, $(filter %.cpp, $(LOCAL_SRC_FILES)), $(patsubst $(LOCAL_SRC_DIR)/%.cpp, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.d, $(item)))
+LOCAL_C_DEP_FILES := $(foreach item, $(filter %.c, $(LOCAL_SRC_FILES)), $(patsubst $(LOCAL_SRC_DIR)/%.c, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.d, $(item)))
 
 LOCAL_OUT_FILE  := $(LOCAL_OUT_DIR)/$(LOCAL_BIN_DIR)/$(OBJECT)
 
