@@ -100,7 +100,7 @@ ifneq ($(strip $(LOCAL_CPP_DEP_FILES)),)
 endif
 
 ifneq ($(strip $(LOCAL_C_DEP_FILES)),)
--include $(LOCAL_CPP_DEP_FILES)
+-include $(LOCAL_C_DEP_FILES)
 endif
 
 .PHONY : clean 
