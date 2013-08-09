@@ -11,9 +11,9 @@ LOCAL_C_INCLUDE := $(LOCAL_PATH)/include
 
 CPPFLAGS := -O0 -g3 -Wall -c -fmessage-length=0 -shared
 
-SHARED_LIBRARIES := GL GLU glut
+SHARED_OPTION :=
 
-SHARED_LIBRARIES_DIR := $(LOCAL_PATH)
+SHARED_LIBRARIES := GL GLU glut
 
 LOCAL_SRC_DIR := src
 
@@ -31,22 +31,25 @@ LOCAL_CPP_OBJ_FILES :=
 
 LOCAL_CPP_DEP_FILES :=
 
+SHARED_LIBRARIES_DIR := $(LOCAL_PATH)/$(LOCAL_LIB_DIR)
+
 LOCAL_OUT_FILE  :=
 
 OBJECT := $(TARGET)
 
 ifeq ($(strip $(SHARED_LIB)), true)
 ifeq ($(strip $(OBJECT)),)
-	OBJECT := $(LIBRARY)
+OBJECT := $(LIBRARY)
 endif
-	LOCAL_OUT_FILE  := $(LOCAL_OUT_DIR)/$(LOCAL_LIB_DIR)/$(OBJECT)
+LOCAL_OUT_FILE  := $(LOCAL_OUT_DIR)/$(LOCAL_LIB_DIR)/$(OBJECT)
+SHARED_OPTION := -fPIC
 else
 ifeq ($(strip $(OBJECT)),)
-	OBJECT := $(EXECUTABLE)
+OBJECT := $(EXECUTABLE)
 endif
-	LOCAL_OUT_FILE  := $(LOCAL_OUT_DIR)/$(LOCAL_BIN_DIR)/$(OBJECT)
+LOCAL_OUT_FILE  := $(LOCAL_OUT_DIR)/$(LOCAL_BIN_DIR)/$(OBJECT)
+SHARED_OPTION := 
 endif
-
 
 SHARED_LIBRARIES := $(foreach item, $(SHARED_LIBRARIES), $(addprefix -l, $(item)))
 
@@ -79,11 +82,14 @@ endef
 #generate shared lib file
 define translate-host-o-to-shared-lib
 	@mkdir -p $(dir $@)
-	@$(GPP) -o $@ $(LOCAL_CPP_OBJ_FILES) $(LOCAL_C_OBJ_FILES) $(SHARED_LIBRARIES) $(SHARED_LIBRARIES_DIR) -shared -fPIC
+	@$(GPP) -o $@ $(LOCAL_CPP_OBJ_FILES) $(LOCAL_C_OBJ_FILES) $(SHARED_LIBRARIES) $(SHARED_LIBRARIES_DIR) -fPIC -shared
 	$(info Target Shared Object : $@)
+	@mkdir -p $(LOCAL_PATH)/$(LOCAL_LIB_DIR)
+	@cp $@ $(LOCAL_PATH)/$(LOCAL_LIB_DIR)
 endef
 
-LOCAL_SRC_FILES := $(call under-all-cpp-files, .) $(call under-all-c-files, .)
+
+LOCAL_SRC_FILES = $(call under-all-cpp-files, .) $(call under-all-c-files, .)
 
 LOCAL_CPP_OBJ_FILES := $(foreach item, $(filter %.cpp, $(LOCAL_SRC_FILES)), $(patsubst $(LOCAL_SRC_DIR)/%.cpp, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.o, $(item)))
 LOCAL_C_OBJ_FILES := $(foreach item, $(filter %.c, $(LOCAL_SRC_FILES)), $(patsubst $(LOCAL_SRC_DIR)/%.c, $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.o, $(item)))
@@ -108,12 +114,12 @@ endif
 
 $(LOCAL_CPP_OBJ_FILES) : $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.o : $(LOCAL_SRC_DIR)/%.cpp
 	@mkdir -p $(dir $@)
-	@$(GPP) $(LOCAL_C_INCLUDE) $(CPPFLAGS) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o $@ $<
+	@$(GPP) $(LOCAL_C_INCLUDE) $(CPPFLAGS) $(SHARED_OPTION) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o $@ $<
 	$(info $(OBJECT) <===== $<)
 
 $(LOCAL_C_OBJ_FILES) : $(LOCAL_OUT_DIR)/$(LOCAL_OBJ_DIR)/%.o : $(LOCAL_SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
-	@$(GCC) $(LOCAL_C_INCLUDE) $(CPPFLAGS) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o $@ $<
+	@$(GCC) $(LOCAL_C_INCLUDE) $(CPPFLAGS) $(SHARED_OPTION) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o $@ $<
 	$(info $(OBJECT) <===== $<)
 
 ifneq ($(strip $(LOCAL_CPP_DEP_FILES)),)
