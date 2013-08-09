@@ -84,8 +84,6 @@ define translate-host-o-to-shared-lib
 	@mkdir -p $(dir $@)
 	@$(GPP) -o $@ $(LOCAL_CPP_OBJ_FILES) $(LOCAL_C_OBJ_FILES) $(SHARED_LIBRARIES) $(SHARED_LIBRARIES_DIR) -fPIC -shared
 	$(info Target Shared Object : $@)
-	@mkdir -p $(LOCAL_PATH)/$(LOCAL_LIB_DIR)
-	@cp $@ $(LOCAL_PATH)/$(LOCAL_LIB_DIR)
 endef
 
 
